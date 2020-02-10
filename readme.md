@@ -1,5 +1,7 @@
-# Prog1
+# Programming Process Book
 
-***Oh god, they makin me stream here***
+*Here I'm gonna make a pdf about all my studies from the uni*
 
->What
+---
+
+[**Here's the book**](Book/bhax-textbook-fdl.pdf), Please look at my suffering.
