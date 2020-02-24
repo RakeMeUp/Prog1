@@ -5,6 +5,7 @@
             <keyword/>
         </keywordset>
     </info>
+
     <section>
         <title>Végtelen ciklus</title>
         <para>
@@ -12,128 +13,85 @@
             100 százalékban minden magot!
         </para>
         <para>
-            Megoldás videó: <link xlink:href="https://youtu.be/lvmi6tyz-nI">https://youtu.be/lvmi6tyz-nI</link>
+            Megoldás forrása:
+		<link xlink:href="turing/">turing/</link>          
         </para>
         <para>
-            Megoldás forrása: <link xlink:href="Turing/infty-f.c">
-                <filename>bhax/thematic_tutorials/bhax_textbook_IgyNeveldaProgramozod/Turing/infty-f.c</filename>
-            </link>, 
-            <link xlink:href="Turing/infty-w.c">
-                <filename>bhax/thematic_tutorials/bhax_textbook_IgyNeveldaProgramozod/Turing/infty-w.c</filename>
-            </link>.
-        </para>
-        <para>
-            Számos módon hozhatunk és hozunk létre végtelen ciklusokat. 
-            Vannak esetek, amikor ez a célunk, például egy szerverfolyamat fusson folyamatosan és van amikor egy
-            bug, mert ott lesz végtelen ciklus, ahol nem akartunk. Saját péláinkban ilyen amikor a PageRank algoritmus
-            rázza az 1 liter vizet az internetben, de az iteráció csak nem akar konvergálni...
-        </para>                    
-        <para>
-            Egy mag 100 százalékban:               
-        </para>
-        <programlisting language="c"><![CDATA[int
-main ()
-{
-  for (;;);
+            Tanulságok, tapasztalatok, magyarázat...
+	</para>
+	<para>
+		A program ciklusokat használva dolgoztatja meg a procit. Sokszor véletlenül készítünk végtelen ciklusokat. Az alábbi példa azt az esetet mutatja be ahol csak 1 magot használ 100%-on.
+		<programlisting language="c">
+		<![CDATA[
+		int main()
+		{
+		for(;;);
+		}
+		]]>
+		</programlisting>
+	
+        <figure>
+          <title>1 magot használ 100%-on</title>
+              <mediaobject>
+                <imageobject>
+                  <imagedata fileref="images/1core100.png" format="PNG"/>
+                </imageobject>
+              </mediaobject>
+        </figure>
 
-  return 0;
-}
-]]>
-        </programlisting>        
-        <para>        
-        vagy az olvashatóbb, de a programozók és fordítók (szabványok) között kevésbé hordozható
         </para>
-        <programlisting language="c"><![CDATA[int
-#include <stdbool.h>
-main ()
-{
-  while(true);
+	<para>
+	A következő példa már minden magot használ 100%-on.
+	       <programlisting language="c">
+		<![CDATA[   
+			#include <omp.h>
 
-  return 0;
-}
-]]>
-        </programlisting>        
-        <para>
-            Azért érdemes a <literal>for(;;)</literal> hagyományos formát használni, 
-            mert ez minden C szabvánnyal lefordul, másrészt
-            a többi programozó azonnal látja, hogy az a végtelen ciklus szándékunk szerint végtelen és nem szoftverhiba. 
-            Mert ugye, ha a <literal>while</literal>-al trükközünk egy nem triviális 
-            <literal>1</literal> vagy <literal>true</literal> feltétellel, akkor ott egy másik, a forrást
-            olvasó programozó nem látja azonnal a szándékunkat.
-        </para>            
-        <para>
-            Egyébként a fordító a <literal>for</literal>-os és 
-            <literal>while</literal>-os ciklusból ugyanazt az assembly kódot fordítja:
-        </para>            
-        <screen><![CDATA[$ gcc -S -o infty-f.S infty-f.c 
-$ gcc -S -o infty-w.S infty-w.c 
-$ diff infty-w.S infty-f.S 
-1c1
-< 	.file	"infty-w.c"
----
-> 	.file	"infty-f.c"
-]]></screen>  
-        <para>
-            Egy mag 0 százalékban:               
-        </para>        
-        <programlisting language="c"><![CDATA[#include <unistd.h>
-int
-main ()
-{
-  for (;;)
-    sleep(1);
-    
-  return 0;
-}
-]]>
-        </programlisting>        
-        <para>
-            Minden mag 100 százalékban:               
-        </para>
+			int main()
+			{
+			#pragma omp parallel
+				{
+				for(;;);
+				}
 
-        <programlisting language="c"><![CDATA[#include <omp.h>
-int
-main ()
-{
-#pragma omp parallel
-{
-  for (;;);
-}
-  return 0;
-}
-]]>
-        </programlisting>        
-        <para>
-            A <command>gcc infty-f.c -o infty-f -fopenmp</command> parancssorral készítve a futtathatót, majd futtatva,               
-            közben egy másik terminálban a <command>top</command> parancsot kiadva tanulmányozzuk, mennyi CPU-t használunk:            
-        </para>
-        <screen><![CDATA[top - 20:09:06 up  3:35,  1 user,  load average: 5,68, 2,91, 1,38
-Tasks: 329 total,   2 running, 256 sleeping,   0 stopped,   1 zombie
-%Cpu0 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu1 : 99,7 us, 0,3 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu2 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu3 : 99,7 us, 0,3 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu4 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu5 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu6 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu7 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-KiB Mem :16373532 total,11701240 free, 2254256 used, 2418036 buff/cache
-KiB Swap:16724988 total,16724988 free,       0 used. 13751608 avail Mem 
+			}
+		]]>
+		</programlisting>  
+	Ennek a programnak a futtatásához szükséges a "-fopenmp" használata, a multi threading miatt.
 
-  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND     
- 5850 batfai    20   0   68360    932    836 R 798,3  0,0   8:14.23 infty-f     
-]]></screen>  
-                                
-        <tip>
-            <title>Werkfilm</title>
-            <itemizedlist>
-                <listitem>
-                    <para>
-                        <link xlink:href="https://youtu.be/lvmi6tyz-nI">https://youtu.be/lvmi6tyz-nI</link>
-                    </para>    
-                </listitem>                
-            </itemizedlist>                
-        </tip>
+            <figure>
+          <title>minden magot használ 100%-on</title>
+              <mediaobject>
+                <imageobject>
+                  <imagedata fileref="images/allCores100.png" format="PNG"/>
+                </imageobject>
+              </mediaobject>
+        </figure>
+
+	</para>
+	<para>
+	Utolsó példánk mikor a program 0%-ban használja ki a procit. Ezt sleep parancssal érhetjük el a legegyszerübben.
+	<programlisting language="c">
+		<![CDATA[
+		#include <unistd.h>
+
+		int main()
+		{
+			for(;;) sleep(1);
+		}
+		]]>
+		</programlisting>
+
+        
+        <figure>
+          <title>0%-ban használja ki a procit</title>
+              <mediaobject>
+                <imageobject>
+                  <imagedata fileref="images/0anyCores.png" format="PNG"/>
+                </imageobject>
+              </mediaobject>
+        </figure>
+
+	</para>
     </section>        
         
     <section>
@@ -232,11 +190,72 @@ false]]></screen>
             Megoldás videó: <link xlink:href="https://bhaxor.blog.hu/2018/08/28/10_begin_goto_20_avagy_elindulunk">https://bhaxor.blog.hu/2018/08/28/10_begin_goto_20_avagy_elindulunk</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="/turing">/turing</link>
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
         </para>
+	<para>
+	Elsőnek is segédváltozóval oldjuk meg a problémát. Azaz létrehozunk még egy változót amiben tárolhatjuk az értéket.
+	<programlisting><![CDATA[
+		#include <stdio.h>
+
+		int main()
+		{
+			printf("segédváltozó csere\n\n");
+		int a=5;
+		int b=7;
+
+			printf("eredeti: a=%d b=%d\n",a,b);
+		int c=a;
+		a=b;
+		b=c;
+
+			printf("csere: a=%d b=%d\n",a,b);
+
+			return 0;
+		}
+		]]></programlisting> 
+	
+	</para>
+	<para>
+	Ezután segédváltozó nélkül, szimpla összeadás kivonással oldjuk meg.
+	<programlisting><![CDATA[
+		#include <stdio.h>
+
+		int main()
+		{
+			printf("valtozocsere valtozo nelkul\n\n");
+		int a=5;
+		int b=7;
+			printf("eredeti: a=%d b=%d\n",a,b);
+		a=a+b;
+		b=a-b;
+		a=a-b;
+			printf("felcserelt: a=%d b=%d\n",a,b);
+			return 0;
+		}
+	]]></programlisting>
+	</para>
+	<para>
+	Végül exor-módszerrel is megoldjuk.
+	<programlisting><![CDATA[
+	#include <stdio.h>
+
+	int main()
+	{
+		printf("Csere exorral\n\n");
+		int a=5;
+		int b=7;
+		printf("Eredeti értékek: a=%d b=%d\n",a,b);
+		a=a^b;
+		b=a^b;
+		a=a^b;
+		printf("Felcserélt értékek: a=%d b=%d\n", a,b);
+		return 0;
+	}
+	]]></programlisting>
+	</para>
     </section>                     
 
     <section>
@@ -250,12 +269,143 @@ false]]></screen>
             Megoldás videó: <link xlink:href="https://bhaxor.blog.hu/2018/08/28/labdapattogas">https://bhaxor.blog.hu/2018/08/28/labdapattogas</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:<link xlink:href="/turing">/turing</link>  
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
         </para>
+	<para>
+	Labdapattogtatást egyszerű feltételvizsgálatokkal oldhatjuk meg, felvesszük a terminál méretét (initscr() function-nal), a labda kezdő helyét, gyorsaságát. Miután megadtuk a kezdő adatokat, "if" függvényekkel vizsgáljuk, hogy a labda az ablak széléhez ért-e, és irányt változtatunk. A labda gyorsaságának csökkentéséhez használhatjuk a usleep() függvényt, kép frissitéshez pedig a refresh()-t.
+	<programlisting><![CDATA[
+		#include <stdio.h>
+		#include <curses.h>
+		#include <unistd.h>
+
+		int
+		main ( void )
+		{
+		    WINDOW *ablak;
+		    ablak = initscr ();
+
+			int x = 0;
+			int y = 0;
+			int xnov = 1;
+			int ynov = 1;
+			int mx;
+			int my;
+
+		    for ( ;; ) {
+
+			getmaxyx ( ablak, my , mx );
+
+			mvprintw ( y, x, "O" );
+
+			refresh ();
+			usleep ( 100000 );
+			clear();
+
+			x = x + xnov;
+			y = y + ynov;
+
+			if ( x>=mx-1 )
+			{
+			    xnov = xnov * -1;
+			}
+			if ( x<=0 )
+			{
+			    xnov = xnov * -1;
+			}
+			if ( y<=0 )
+			{
+			    ynov = ynov * -1;
+			}
+			if ( y>=my-1 )
+			{
+			    ynov = ynov * -1;
+			}
+		    }
+
+		    return 0;
+		}
+	
+	]]></programlisting>
+	</para>
+	<para>
+	Ha nagyon kalandvágyóak vagyunk if nélkül is elérhetjük ezt.
+	<programlisting><![CDATA[
+		#include <iostream>
+		#include <iomanip>
+		#include <unistd.h>
+
+		using namespace std;
+
+		int rajz(int x,int y, int h, int w)
+		{
+		    for(int i=1;i<=x;i++)
+		    {
+			cout<<"X";
+			for(int j=1;j<=w;j++)
+			{
+				cout<<" ";
+			}
+			cout<<" X"<<endl;
+		    }
+		    cout<<"X";
+		    for(int i=0;i<y;i++)
+		    {
+			cout<<" ";
+		    }
+		    cout<<"o";
+		    for(int i=y;i<w;i++)
+		    {
+			cout<<" ";
+		    }
+		    cout<<"X"<<endl;
+		    for(int i=x;i<h;i++)
+		    {
+			cout<<"X";
+			for(int j=1;j<=w;j++)
+			{
+				cout<<" ";
+			}
+			cout<<" X"<<endl;
+		    }
+
+		    return 0;
+		}
+
+		int main()
+		{
+		    int x=0,y=0;
+		    int width,height;
+
+		    cout<<"Add meg a terulet szelesseget es magassagat, amin szeretned, hogy pattogjon a labda! \n";
+		    cin>>height>>width;
+		    while(true)
+		    {
+			system("clear");
+			cout<<" ";
+			for(int i=0;i<width+1;i++)
+			{
+				cout<<"X";
+			}
+			cout<<endl;
+			rajz(abs(height-(x++%(height*2))),abs(width-(y++%(width*2))),height,width);
+			cout<<" ";
+			for(int i=0;i<width+1;i++)
+			{
+				cout<<"X";
+			}
+			cout<<endl;
+			usleep(50000);
+		    }
+		    return 0;
+		}
+
+	]]></programlisting>
+	</para>
     </section>                     
+
 
     <section>
         <title>Szóhossz és a Linus Torvalds féle BogoMIPS</title>
@@ -264,19 +414,96 @@ false]]></screen>
             Használd ugyanazt a while ciklus fejet, amit Linus Torvalds a BogoMIPS rutinjában! 
         </para>
         <para>
-            Megoldás videó: <link xlink:href="https://youtu.be/9KnMqrkj_kU">https://youtu.be/9KnMqrkj_kU</link>, 
-            <link xlink:href="https://youtu.be/KRZlt1ZJ3qk">https://youtu.be/KRZlt1ZJ3qk</link>, 
-            <link xlink:href=""></link>.
+            Megoldás videó: <link xlink:href=""></link>
         </para>
         <para>
-            Megoldás forrása: <link xlink:href="Turing/bogomips.c">
-                <filename>bhax/thematic_tutorials/bhax_textbook_IgyNeveldaProgramozod/Turing/bogomips.c</filename>
-            </link>
+            Megoldás forrása: <link xlink:href="/turing/">/turing/</link>
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat... 
         </para>
-    </section>                     
+	<para>
+	Az 'int' méretét, és hogy hány bitet foglal, bitshifteléssel nézzük meg. A 'while' függvényben folyamatosan balra lépegetünk, és minden lépésnél növeljük a 'hossz' változót, amig a 'wat' változó nulláig nem ér.
+	<programlisting><![CDATA[
+	#include <stdio.h>
+	int
+	main (void)
+	{
+	  int hossz = 0;
+	  int wat = 1;
+	  do
+	    ++hossz;
+	  while (wat <<= 1);
+	  printf ("szohossz: %d bites\n", hossz);
+	  return 0;
+	}
+	]]></programlisting>
+	Az 'int' 32 bites szó.
+	</para>
+
+	<para>
+	BogoMips
+	</para>
+
+	<para>
+	A BogoMips egy algoritmus ami a Linux kernelben méri fel a processzor sebességét az ú.n. 'busy-loop' konfigurálásához.
+A 'busy-loop' annyit jelent, hogy egy process folytonosan egy feltételt vizsgál, amíg az igazat ad vissza értékül, BogoMips azt mutatja hány mp-ig áll a proci, tehát nem csinál semmit.
+	<programlisting><![CDATA[
+	#include <time.h>
+	#include <stdio.h>
+
+	void
+	delay (unsigned long long int loops)
+	{
+	unsigned long long int i;
+	for (i = 0; i < loops; i++);
+	}
+
+	int
+	main (void)
+	{
+	unsigned long long int loops_per_sec = 1;
+	unsigned long long int ticks;
+
+	printf ("Calibrating delay loop..");
+	fflush (stdout);
+
+	while ((loops_per_sec <<= 1))
+	{
+	ticks = clock ();
+	delay (loops_per_sec);
+	ticks = clock () - ticks;
+
+	printf ("%llu %llu\n", ticks, loops_per_sec);
+
+	if (ticks >= CLOCKS_PER_SEC)
+	{
+	loops_per_sec = (loops_per_sec / ticks) * CLOCKS_PER_SEC;
+
+	printf ("ok - %llu.%02llu BogoMIPS\n", loops_per_sec / 500000,
+	(loops_per_sec / 5000) % 100);
+
+	return 0;
+	}
+	}
+
+	printf ("failed\n");
+	return -1;
+	}
+	]]></programlisting>
+	 Bitshifteléssel megyünk a while ciklusban végig a 2 hatványain.
+            A ticks-ben tároljuk mennyi processzoridőt használt a CPU eddig, majd a delay() függvénynek
+            átadjuk loops_per_sec változót (aminek a bitjei mindig odébb vannak eggyel tolva), ahol elszámolunk
+            0-tól a változó végéig. 
+            Ezután megint lekérjük a processzoridőt kivonva az előző ticks-ben tárolt CPU időt, így megkapjuk,
+            mennyi ideig tartott a elszámolni a loops_per_sec változó végéig.
+            Majd megnézzük if-el, hogy nagyobb vagy egyenlő a kapott ticks, mint a CLOCKS_PER_SEC aminek az értéke
+            1 millió és ha ez igaz, akkor kiszámoljuk, hogy milyen érték kell ahhoz,hogy a ciklusértékéket megkapjuk, ezzel 
+meghatározva a CPU sebességét. 
+	
+	
+	</para>
+    </section>
 
     <section>
         <title>Helló, Google!</title>
