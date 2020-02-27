@@ -594,7 +594,7 @@ meghatározva a CPU sebességét.
                                                                                                                                                                                                                                                                                                                                                         
     <section xml:id="bhax-textbook-feladatok-turing.MontyHall">
         <title>A Monty Hall probléma</title>
-        <section>
+        
             <para> Írj R szimulációt a Monty Hall problémára! </para>
             <para> Megoldás videó: <link
                     xlink:href="https://bhaxor.blog.hu/2019/01/03/erdos_pal_mit_keresett_a_nagykonyvben_a_monty_hall-paradoxon_kapcsan"
@@ -686,7 +686,7 @@ length(nemvaltoztatesnyer)+length(valtoztatesnyer)
 [1] 1000000
 ]]>
 </programlisting>
-        </section>
+
     </section>
 
     <section xml:id="Brun">
