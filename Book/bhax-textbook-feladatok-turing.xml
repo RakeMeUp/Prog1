@@ -504,38 +504,189 @@ meghatározva a CPU sebességét.
 	
 	</para>
     </section>
-
     <section>
         <title>Helló, Google!</title>
-        <para>
-            Írj olyan C programot, amely egy 4 honlapból álló hálózatra kiszámolja a négy lap Page-Rank 
-            értékét!
+        <para> Írj olyan C programot, amely egy 4 honlapból álló hálózatra kiszámolja a négy lap
+            Page-Rank értékét! </para>
+        <para> Megoldás forrása: <link
+                xlink:href="https://github.com/RakeTheRape/BHAKSZ/tree/master/turing"
+                >https://github.com/RakeTheRape/BHAKSZ/tree/master/turing</link>
         </para>
-        <para>
-            Megoldás videó: <link xlink:href=""></link>
+        <para> Tanulságok, tapasztalatok, magyarázat... </para>
+        <para> A Page Rank az interneten található oldalakat rangsorolja. Kezdetben minden oldalnak
+            van egy szavazati pontja és ha az egyik linkeli a másikat, akkor a linkelt oldal
+            megkapja a linkelő pontját. Tehát egy oldal akkor lesz előkelőbb helyen egy google
+            kereséskor, ha minél több másik oldal linkel rá, illetve ezen oldalakra is minél többen
+            linkelnek, annál jobb minőségűnek fog számítani egy linkelése vagy szavazata. <programlisting><![CDATA[
+		#include <stdio.h>
+		#include <math.h>
+
+		void
+		kiir (double tomb[], int db)
+		{
+		  int i;
+
+		  for (i = 0; i < db; ++i)
+		    printf ("%f\n", tomb[i]);
+		}
+
+		double
+		tavolsag (double PR[], double PRv[], int n)
+		{
+		  double osszeg = 0.0;
+		  int i;
+
+		  for (i = 0; i < n; ++i)
+		    osszeg += (PRv[i] - PR[i]) * (PRv[i] - PR[i]);
+
+		  return sqrt(osszeg);
+		}
+
+		int
+		main (void)
+		{
+
+		  double L[4][4] = {
+		    {0.0, 0.0, 1.0 / 3.0, 0.0},
+		    {1.0, 1.0 / 2.0, 1.0 / 3.0, 1.0},
+		    {0.0, 1.0 / 2.0, 0.0, 0.0},
+		    {0.0, 0.0, 1.0 / 3.0, 0.0}
+		  };
+
+		  double PR[4] = { 0.0, 0.0, 0.0, 0.0 };
+		  double PRv[4] = { 1.0 / 4.0, 1.0 / 4.0, 1.0 / 4.0, 1.0 / 4.0 };
+
+		  int i, j;
+
+		  for (;;)
+		    {
+
+		      for (i = 0; i < 4; ++i)
+			{
+			  PR[i] = 0.0;
+			  for (j = 0; j < 4; ++j)
+			    PR[i] += (L[i][j] * PRv[j]);
+			}
+		      if (tavolsag (PR, PRv, 4) < 0.00000001)
+			break;
+
+		      for (i = 0; i < 4; ++i)
+			PRv[i] = PR[i];
+
+		    }
+
+		  kiir (PR, 4);
+
+		  return 0;
+		}
+
+	]]></programlisting>
         </para>
-        <para>
-            Megoldás forrása: <link xlink:href=""></link>
-        </para>
-        <para>
-            Tanulságok, tapasztalatok, magyarázat...
-        </para>
+        <para> Az L nevű többdimenziós tömbben vannak rögzítve mátrix formájában az adatok a
+            linkelésekről, melyik oldalra melyik oldal linkel és mennyit. A végtelen ciklusban
+            nullázzuk PR összes elemét, majd rögtön hozzáadjuk az L mátrix és PRv vektor
+            szorzatainak értékét. Ezután a távolság metódusunkban végigmegyünk a PR és PRv
+            vektorokon és egy változóban eltároljuk ezek különbségének a négyzetét (hogy ne legyen
+            negatív) és gyököt vonva visszaadjuk az értéket, amely ha kisebb mint 0.00000001, akkor
+            kilépünk a végtelen ciklusból, ellenkező esetben pedig PRv tömböt feltöltjük PR
+            elemeivel. Végül kiiratjuk az értékeket. </para>
     </section>
                                                                                                                                                                                                                                                                                                                                                         
     <section xml:id="bhax-textbook-feladatok-turing.MontyHall">
         <title>A Monty Hall probléma</title>
-        <para>
-            Írj R szimulációt a Monty Hall problémára!
-        </para>
-        <para>
-            Megoldás videó: <link xlink:href="https://bhaxor.blog.hu/2019/01/03/erdos_pal_mit_keresett_a_nagykonyvben_a_monty_hall-paradoxon_kapcsan">https://bhaxor.blog.hu/2019/01/03/erdos_pal_mit_keresett_a_nagykonyvben_a_monty_hall-paradoxon_kapcsan</link>
-        </para>
-        <para>
-            Megoldás forrása: <link xlink:href="https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/MontyHall_R">https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/MontyHall_R</link>
-        </para>
-        <para>
-            Tanulságok, tapasztalatok, magyarázat...
-        </para>
+        <section>
+            <para> Írj R szimulációt a Monty Hall problémára! </para>
+            <para> Megoldás videó: <link
+                    xlink:href="https://bhaxor.blog.hu/2019/01/03/erdos_pal_mit_keresett_a_nagykonyvben_a_monty_hall-paradoxon_kapcsan"
+                    >https://bhaxor.blog.hu/2019/01/03/erdos_pal_mit_keresett_a_nagykonyvben_a_monty_hall-paradoxon_kapcsan</link>
+            </para>
+            <para> Megoldás forrása: <link
+                    xlink:href="https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/MontyHall_R"
+                    >https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/MontyHall_R</link>
+            </para>
+            <para> A Monty Hall probléma egy amerikai televíziós vetélekedőben jelent meg, ahol a
+                műsor végén a játékosnak 3 ajtó közül kellett választania. A nyeremény csak az egyik
+                ajtó mögött volt. A játékos választása után a műsorvezető kinyitott egy üres ajtót
+                és feltette a kérdést, hogy fenntartja-e a választását a játékos vagy egy másik
+                ajtót választ. A Monty Hall probléma kérdése, hogy számít-e, hogy a játékos
+                megváltoztatja-e a választását. Józan ésszel gondolkodva nem számít, mivel a maradék
+                két ajtó közül az egyik mögött van a nyeremény, így 50-50% az esélye annak, hogy
+                nyerünk. A feladvány bizonyítása több matematikai professzoron is kifogott, köztük a
+                világhírű Erdős Pálon is, akit csak a számítógépes szimuláció győzött meg, ami
+                alapján számít, hogy másik ajtót választunk, ugyanis ekkor megduplázódik az esélyünk
+                a nyerésre. Amikor először választunk ajtót, akkor 1/3 az esélye annak, hogy
+                eltaláljuk a nyertes ajtót és 2/3, hogy nem. Ezután a játékvezető kinyit egy ajtót,
+                amelyik üres és ha nem változtatunk a döntésünkön, továbbra is 1/3 lesz annak az
+                esélye, hogy nyertünk. Viszont mivel már csak 2 ajtó van a játékban ezért ha
+                változtatunk, akkor 2/3 lesz az esélyünk a nyerésre. <programlisting>
+<![CDATA[
+kiserletek_szama=1000000
+kiserlet = sample(1:3, kiserletek_szama, replace=T)
+jatekos = sample(1:3, kiserletek_szama, replace=T)
+musorvezeto=vector(length = kiserletek_szama)
+for (i in 1:kiserletek_szama) {
+    if(kiserlet[i]==jatekos[i]){
+    
+        mibol=setdiff(c(1,2,3), kiserlet[i])
+    
+    }else{
+    
+        mibol=setdiff(c(1,2,3), c(kiserlet[i], jatekos[i]))
+    
+    }
+    musorvezeto[i] = mibol[sample(1:length(mibol),1)]
+}
+nemvaltoztatesnyer= which(kiserlet==jatekos)
+valtoztat=vector(length = kiserletek_szama)
+for (i in 1:kiserletek_szama) {
+    holvalt = setdiff(c(1,2,3), c(musorvezeto[i], jatekos[i]))
+    valtoztat[i] = holvalt[sample(1:length(holvalt),1)]
+    
+}
+valtoztatesnyer = which(kiserlet==valtoztat)
+sprintf("Kiserletek szama: %i", kiserletek_szama)
+length(nemvaltoztatesnyer)
+length(valtoztatesnyer)
+length(nemvaltoztatesnyer)/length(valtoztatesnyer)
+length(nemvaltoztatesnyer)+length(valtoztatesnyer)
+]]>
+</programlisting>
+            </para>
+            <para> Először eltároljuk, hogy hány kisérletet végezzünk el, majd a kiserlet és jatekos
+                vektorokban kisorsolunk 1 és 3 között véletlenszerűen számokat. A műsorvezető
+                vektorát beállítjuk a kísérletek számával. Ezután egy for ciklussal végigmegyünk
+                minden kísérleten és ha kiserlet i-edig értéke megyegyezik a a játékos i-edig
+                találatával, az jelenti, hogy eltalálta a játékos a nyereményt és a mibol vektorba
+                az a két érték kerül be amelyeket a játékos nem választott. (Ez a két érték az üres
+                ajtókat jelenti ebben az esetben.) </para>
+            <para> Ha a játékos nem találta el elsőre a kiserlet vektorban található számot, akkor a
+                mibol vektorba már csak 1 egy érték kerülhet, az amelyik nem a nyeremény és nem a
+                játékos által kiválasztott érték. Ezután a musorvezeto vektorba berakjuk a mibol
+                vektorban található számot, illetve ha két érték van benne akkor a kettőből az
+                egyiket véletlenszerűen. </para>
+            <para> Ezután értkezik a kiértékelés. A nemvaltoztatesnyer vektorba kerülnek azok az
+                esetek, amikor elsőre eltalálja a játékos a megfelelő ajtót. Megint végigmegyünk a
+                kísérleteken és a holvalt vektorba azok vagy az az érték kerül az 1, 2 és 3 közül
+                amely nem egyenlő a műsorvezető és a játékos által választottal vagyis ekkor ha
+                váltana a játékos akkor nyerne. A változtat vektorba pedig a holvalt vektor elemei
+                közül az egyiket rakjuk át. </para>
+            <para> A valtoztatesnyer vektorba pedig azok az értékek kerülnek, amelyek a kiserlet
+                vektorba és a változtat vektorba találhatóak, vagyis ekkor az az ajtó a nyertes
+                ,amelyiket másodjára választanánk. Eztuán pedig kiiratjuk az esetek számait: </para>
+            <programlisting language="R">
+<![CDATA[
+[1] "Kiserletek szama: 1000000"
+> length(nemvaltoztatesnyer)
+[1] 333590
+> length(valtoztatesnyer)
+[1] 666410
+> length(nemvaltoztatesnyer)/length(valtoztatesnyer)
+[1] 0.5005777
+> length(nemvaltoztatesnyer)+length(valtoztatesnyer)
+[1] 1000000
+]]>
+</programlisting>
+        </section>
     </section>
 
     <section xml:id="Brun">
@@ -773,7 +924,30 @@ plot(x,y,type="b")]]>
                     <phrase>A B<subscript>2</subscript> konstans közelítése</phrase>
                 </textobject>
             </mediaobject>
-        </figure>                             
+        </figure>
+        <para> A Brun tétel azt mondja, hogy az ikerprímszámok reciprokából képzett összege
+            konvergál egy számhoz. Ezt határt Brun konstansnak nevezzük. Ezzel ellentétben a
+            prímszámok a végtelen felé tartanak. </para>
+        <para>
+            <programlisting language="c"><![CDATA[stp <- function(x){
+    primes = primes(x)
+    diff = primes[2:length(primes)]-primes[1:length(primes)-1]
+    idx = which(diff==2)
+    t1primes = primes[idx]
+    t2primes = primes[idx]+2
+    rt1plust2 = 1/t1primes+1/t2primes
+    return(sum(rt1plust2))
+}
+    ]]>
+            </programlisting>
+        </para>
+        <para> A program először a primeket számolja ki x-ig. Ezután az egymásmellett álló prímeket
+            kivonja egymásból. Az 'idx' azt nézi, hogy ha a különbség kettő, akkor azok ikerprímek.
+            't1primes' változóba azokat a vizsgált számpároknak első elemét tároljuk melyeknek
+            különbsége 3. </para>
+        <para> 't2primes' változóba azt a vizsgált számpár második elemét mentjük, ahol a különbség
+            4. Ezután jön a matek része, a függvény reciprokokat hoz létre, azokat összeadja. Ezeket
+            kiírjuk, és láthatjuk merre konvergál. A prímek felső határhoz konvergálnak. </para>                             
         <tip>
             <title>Werkfilm</title>
             <itemizedlist>
@@ -784,7 +958,8 @@ plot(x,y,type="b")]]>
                 </listitem>                
                 <listitem>
                     <para>
-                        <link xlink:href="https://youtu.be/aF4YK6mBwf4">https://youtu.be/aF4YK6mBwf4</link>
+                        <link xlink:href="https://youtu.be/aF4YK6mBwf4"
+                            >https://youtu.be/aF4YK6mBwf4</link>
                     </para>    
                 </listitem>                
             </itemizedlist>                
